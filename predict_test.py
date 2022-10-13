@@ -44,6 +44,7 @@ def main():
     model = Darknet(cfg, img_size)
     model.load_state_dict(torch.load(weights, map_location='cpu')["model"])
     model.to(device)
+    process_time = 0
 
     model.eval()
     with torch.no_grad():
@@ -74,11 +75,12 @@ def main():
             t1 = torch_utils.time_synchronized()
             pred = model(img)[0]  # only get inference result
             t2 = torch_utils.time_synchronized()
-            print(t2 - t1)
+            # print(t2 - t1)
 
             pred = utils.non_max_suppression(pred, conf_thres=0.1, iou_thres=0.6, multi_label=True)[0]
             t3 = time.time()
-            print(t3 - t2)
+            process_time += (t3 - t1)
+            # print(t3 - t2)
 
             if pred is None:
                 print("No target detected.")
@@ -106,6 +108,7 @@ def main():
             plt.show()
             # 保存预测的图片结果
             plot_img.save(os.path.join(save_path, file_name.split(".")[0]) + ".jpg")
+        print("Average process per image: ", process_time / len(os.listdir(img_list_dir)))
 
 
 if __name__ == "__main__":
