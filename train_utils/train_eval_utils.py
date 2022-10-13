@@ -35,7 +35,7 @@ def train_one_epoch(model, optimizer, data_loader, device, epoch,
     for i, (imgs, targets, paths, _, _) in enumerate(metric_logger.log_every(data_loader, print_freq, header)):
         # ni 统计从epoch0开始的所有batch数
         ni = i + nb * epoch  # number integrated batches (since train start)
-        imgs = imgs.to(device).float() / 255.0  # uint8 to float32, 0 - 255 to 0.0 - 1.0
+        imgs = imgs.to(device).float()  # / 255.0  # uint8 to float32, 0 - 255 to 0.0 - 1.0
         targets = targets.to(device)
 
         # Multi-Scale
@@ -209,7 +209,7 @@ def evaluate(model, data_loader, coco=None, device=None):
     coco_evaluator = CocoEvaluator(coco, iou_types)
 
     for imgs, targets, paths, shapes, img_index in metric_logger.log_every(data_loader, 100, header):
-        imgs = imgs.to(device).float() / 255.0  # uint8 to float32, 0 - 255 to 0.0 - 1.0
+        imgs = imgs.to(device).float()  # / 255.0  # uint8 to float32, 0 - 255 to 0.0 - 1.0
         # targets = targets.to(device)
 
         # 当使用CPU时，跳过GPU相关指令
