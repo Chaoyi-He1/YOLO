@@ -22,10 +22,10 @@ def main():
     json_path = "./data/classes.json"  # json标签文件
     # img_path = "./my_yolo_dataset/val/images/00001.csv"
     img_list_dir = "./my_yolo_dataset/val/images"
-    save_path = "./predicting_results"
+    save_path = "./predict_results"
     isExist = os.path.exists(save_path)
     if not isExist:
-        os.makedirs(isExist)
+        os.makedirs(save_path)
         print("The saving directory is created")
     assert os.path.exists(cfg), "cfg file {} dose not exist.".format(cfg)
     assert os.path.exists(weights), "weights file {} dose not exist.".format(weights)
@@ -88,7 +88,7 @@ def main():
 
             # process detections
             pred[:, :4] = utils.scale_coords(img.shape[2:], pred[:, :4], img_o.shape).round()
-            print(pred.shape)
+            # print(pred.shape)
 
             bboxes = pred[:, :4].detach().cpu().numpy()
             scores = pred[:, 4].detach().cpu().numpy()
@@ -104,8 +104,8 @@ def main():
                                  line_thickness=3,
                                  font='arial.ttf',
                                  font_size=20)
-            plt.imshow(plot_img)
-            plt.show()
+            # plt.imshow(plot_img)
+            # plt.show()
             # 保存预测的图片结果
             plot_img.save(os.path.join(save_path, file_name.split(".")[0]) + ".jpg")
         print("Average process per image: ", process_time / len(os.listdir(img_list_dir)))
