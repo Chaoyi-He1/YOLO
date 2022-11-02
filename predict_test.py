@@ -18,7 +18,7 @@ from draw_box_utils import draw_objs
 def main():
     img_size = 512  # 必须是32的整数倍 [416, 512, 608]
     cfg = "cfg/my_yolov3.cfg"  # 改成生成的.cfg文件
-    weights = "./weights/yolov3spp-256.pt"  # 改成自己训练好的权重文件
+    weights = "./weights/yolov3spp-139.pt"  # 改成自己训练好的权重文件
     json_path = "./data/classes.json"  # json标签文件
     # img_path = "./my_yolo_dataset/val/images/00001.csv"
     img_list_dir = "./my_yolo_dataset/val/images"
@@ -63,7 +63,7 @@ def main():
             assert img_o is not None, "Image Not Found " + img_path
 
             img = img_utils.letterbox(img_o, new_shape=input_size, auto=True, color=(0, 0, 0))[0]
-            img_print = ((img / (np.max(np.abs(img))) + 1) / 2 * 255).astype(np.uint8)
+            img_print = (img / (np.max(np.abs(img))) * 255).astype(np.uint8)
             # Convert
             img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
             img = np.ascontiguousarray(img)
@@ -81,6 +81,7 @@ def main():
             t3 = time.time()
             process_time += (t3 - t1)
             # print(t3 - t2)
+            # print(t3 - t1)
 
             if pred is None:
                 print("No target detected.")
@@ -104,6 +105,11 @@ def main():
                                  line_thickness=3,
                                  font='arial.ttf',
                                  font_size=20)
+            with open(os.path.join(save_path, file_name.split(".")[0]) + ".txt", 'a') as f:
+                info = np.concatenate([np.reshape(classes, (-1, 1)), np.reshape(scores, (-1, 1)), bboxes], axis=-1)
+                info = [info[i, :].tolist() for i in range(info.shape[0])]
+                for info_str in info:
+                    f.write(str(info_str) + "\n")
             # plt.imshow(plot_img)
             # plt.show()
             # 保存预测的图片结果
